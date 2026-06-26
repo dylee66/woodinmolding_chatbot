@@ -345,26 +345,57 @@ function buildStockHTML() {
 // ── 납기표 빌드 ─────────────────────────────────────────
 function buildDeliveryHTML() {
   if (!DELIVERY) return '데이터 로딩 중...';
-  let text = '[납기 일정]\n\n';
-  for (const g of DELIVERY.groups) {
-    text += '【' + g.label + '】\n';
-    g.items.forEach(i => text += '• ' + i + '\n');
-    text += '\n';
-  }
-  text += '[공통 규칙]\n';
-  DELIVERY.notes.forEach(n => text += '• ' + n + '\n');
-  return text;
+  const sectionColors = [
+    {bg:'#e8f5e9', border:'#a5d6a7', title:'#1b5e20', badge:'#2d5a27', badgeTxt:'#fff'},
+    {bg:'#fff3e0', border:'#ffcc80', title:'#e65100', badge:'#ef6c00', badgeTxt:'#fff'},
+    {bg:'#e3f2fd', border:'#90caf9', title:'#0d47a1', badge:'#1565c0', badgeTxt:'#fff'},
+    {bg:'#fce4ec', border:'#f48fb1', title:'#880e4f', badge:'#ad1457', badgeTxt:'#fff'},
+  ];
+  let h = '<div style="display:flex;flex-direction:column;gap:10px;padding:2px">';
+  h += '<div style="font-weight:700;font-size:14px;color:#1a3a2a;padding:6px 0 2px">⏰ 납기 일정</div>';
+  DELIVERY.groups.forEach((g, i) => {
+    const c = sectionColors[i] || sectionColors[0];
+    h += `<div style="border:1.5px solid ${c.border};border-radius:10px;overflow:hidden">`;
+    h += `<div style="background:${c.badge};padding:7px 12px;font-size:12px;font-weight:700;color:${c.badgeTxt}">${g.label}</div>`;
+    h += `<div style="background:${c.bg};padding:8px 12px">`;
+    g.items.forEach(item => {
+      h += `<div style="font-size:12px;color:#333;padding:2px 0;display:flex;align-items:center;gap:6px">`;
+      h += `<span style="color:${c.title};font-size:10px">▪</span>${item}</div>`;
+    });
+    h += '</div></div>';
+  });
+  // 공통 규칙
+  h += '<div style="border:1.5px solid #b0bec5;border-radius:10px;overflow:hidden">';
+  h += '<div style="background:#546e7a;padding:7px 12px;font-size:12px;font-weight:700;color:#fff">공통 규칙</div>';
+  h += '<div style="background:#eceff1;padding:8px 12px">';
+  DELIVERY.notes.forEach(n => {
+    h += `<div style="font-size:12px;color:#333;padding:2px 0;display:flex;align-items:flex-start;gap:6px">`;
+    h += `<span style="color:#546e7a;font-size:10px;margin-top:2px">▪</span><span>${n}</span></div>`;
+  });
+  h += '</div></div>';
+  h += '</div>';
+  return '__HTML__' + h;
 }
 
 // ── QNA 빌드 ────────────────────────────────────────────
 function buildQnaHTML() {
   if (!QNA) return '데이터 로딩 중...';
-  let text = '[기타 QNA]\n\n';
+  let h = '<div style="display:flex;flex-direction:column;gap:10px;padding:2px">';
+  h += '<div style="font-weight:700;font-size:14px;color:#1a3a2a;padding:6px 0 2px">❓ 기타 QNA</div>';
   for (const cat of QNA.categories) {
-    text += '【' + cat.title + '】\n';
-    cat.items.forEach(item => text += '❓ ' + item.q + '\n' + item.a + '\n\n');
+    h += '<div style="border:1.5px solid #c5e1a5;border-radius:10px;overflow:hidden">';
+    h += `<div style="background:#2d5a27;padding:7px 12px;font-size:12px;font-weight:700;color:#fff">${cat.title}</div>`;
+    h += '<div style="background:#f9fbe7;padding:8px 12px;display:flex;flex-direction:column;gap:8px">';
+    cat.items.forEach(item => {
+      h += '<div style="border:1px solid #dce775;border-radius:8px;overflow:hidden">';
+      h += `<div style="background:#f0f4c3;padding:5px 10px;font-size:12px;font-weight:600;color:#33691e">Q. ${item.q}</div>`;
+      h += `<div style="padding:7px 10px;font-size:12px;color:#333;white-space:pre-line;line-height:1.7">${item.a}</div>`;
+      h += '</div>';
+    });
+    h += '</div></div>';
   }
-  return text;
+  h += '</div>';
+  return '__HTML__' + h;
 }
 
 // ── 재고 조회 ───────────────────────────────────────────
