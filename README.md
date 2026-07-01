@@ -1,2 +1,2 @@
 # woodinmolding_educational materials
-chatbot made by claud  for molding
+ made by claud  for molding
